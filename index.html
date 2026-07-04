@@ -1,0 +1,1488 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio - Tharathep</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link href="output.css" rel="stylesheet" />
+
+    <!-- Lucide Icons via unpkg -->
+    <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+
+    <style>
+      html {
+        scrollbar-gutter: stable;
+      }
+      body {
+        background-color: #0d2440;
+        color: #e7f0fa;
+        overflow-x: hidden;
+        font-family: "Inter", sans-serif;
+      }
+
+      /* Hardware Accelerated Glass Panels */
+      .glass-panel {
+        background: rgba(231, 240, 250, 0.03);
+        backdrop-filter: blur(16px) saturate(160%); /* Reduced blur radius for performance */
+        -webkit-backdrop-filter: blur(16px) saturate(160%);
+        border: 1px solid rgba(231, 240, 250, 0.08);
+        box-shadow: 0 8px 32px 0 rgba(13, 36, 64, 0.4);
+        transition:
+          transform 0.3s ease,
+          background 0.3s ease,
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
+        will-change: transform;
+      }
+
+      .glass-panel-interactive:hover {
+        background: rgba(231, 240, 250, 0.06);
+        border-color: rgba(231, 240, 250, 0.15);
+        transform: translateY(-2px);
+        box-shadow:
+          0 12px 40px 0 rgba(13, 36, 64, 0.5),
+          inset 0 0 12px rgba(231, 240, 250, 0.05);
+      }
+
+      /* 
+       * PERFORMANCE FIX: Replaced expensive filter: blur() with CSS radial gradients.
+       * This removes heavy GPU compositing and stops browser lagging on movement.
+       */
+      .orb {
+        position: absolute;
+        pointer-events: none;
+        z-index: 0;
+        will-change: transform;
+        border-radius: 50%;
+      }
+
+      .orb-glow-brand-600 {
+        background: radial-gradient(
+          circle closest-side,
+          rgba(46, 94, 153, 0.4) 0%,
+          transparent 100%
+        );
+      }
+
+      .orb-glow-brand-300 {
+        background: radial-gradient(
+          circle closest-side,
+          rgba(123, 164, 208, 0.25) 0%,
+          transparent 100%
+        );
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0d2440;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #2e5e99;
+        border-radius: 9999px;
+        border: 2px solid #0d2440;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #7ba4d0;
+      }
+
+      .nav-link {
+        position: relative;
+      }
+      .nav-link::after {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: #7ba4d0;
+        transition:
+          width 0.3s ease,
+          background-color 0.3s ease;
+        transform: translateX(-50%);
+      }
+      .nav-link:hover::after,
+      .nav-link.active::after {
+        width: 100%;
+        background: #e7f0fa;
+      }
+
+      .capsule-avatar-frame {
+        border-radius: 140px;
+        overflow: hidden;
+        border: 3px solid rgba(123, 164, 208, 0.2);
+        box-shadow: 0 20px 50px rgba(13, 36, 64, 0.8);
+        position: relative;
+        /* Performance: Ensure clipping mask is hardware accelerated */
+        transform: translateZ(0);
+      }
+
+      .wave-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.15;
+      }
+
+      .mobile-active {
+        color: #e7f0fa !important;
+        transform: translateY(-2px);
+      }
+      .mobile-active i {
+        color: #7ba4d0;
+      }
+
+      /* Respect system preferences for reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body
+    class="antialiased selection:bg-brand-600 selection:text-white relative min-h-screen flex flex-col"
+  >
+    <!-- Background dynamic elements - PERFORMANCE OPTIMIZED -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-[-1]">
+      <!-- Mouse Follower Orb (Using fast radial gradient instead of blur) -->
+      <div
+        id="cursor-orb"
+        class="orb orb-glow-brand-300 w-[450px] md:w-[600px] h-[450px] md:h-[600px] transition-opacity duration-500 opacity-60 hidden md:block"
+      ></div>
+
+      <!-- Animated Background Orbs (No blurs, subtle movement) -->
+      <div
+        class="orb orb-glow-brand-600 w-[600px] md:w-[800px] h-[600px] md:h-[800px] top-[-10%] left-[-20%] animate-blob"
+      ></div>
+      <div
+        class="orb orb-glow-brand-300 w-[500px] md:w-[700px] h-[500px] md:h-[700px] bottom-[-15%] right-[-15%] animate-blob-reverse"
+        style="animation-delay: 2s"
+      ></div>
+
+      <!-- Static noise overlay (cheaper when not layered over blurs) -->
+      <div
+        class="absolute inset-0 opacity-[0.02] mix-blend-overlay"
+        style="
+          background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E&quot;);
+        "
+      ></div>
+    </div>
+
+    <!-- Decorative Wavy Paths -->
+    <svg
+      class="wave-svg"
+      viewBox="0 0 1440 800"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M-100,200 C300,50 600,450 1000,150 C1200,50 1400,250 1600,100"
+        stroke="#7BA4D0"
+        stroke-width="1.5"
+        stroke-dasharray="2 4"
+      />
+      <path
+        d="M-50,600 C400,400 800,750 1100,500 C1300,350 1500,450 1700,300"
+        stroke="#2E5E99"
+        stroke-width="1"
+      />
+    </svg>
+
+    <!-- DYNAMIC TOP HEADER -->
+    <header
+      id="top-nav"
+      class="fixed top-0 left-0 w-full z-[60] transition-transform duration-300 glass-panel border-x-0 border-t-0 border-b border-brand-300/10 rounded-none bg-brand-900/80"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 lg:py-4 flex items-center justify-between"
+      >
+        <a href="#" class="flex items-center gap-3 cursor-pointer group">
+          <div
+            class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-brand-300 flex items-center justify-center transform group-hover:rotate-6 transition-transform duration-300 shadow-lg shadow-brand-600/30"
+          >
+            <span class="font-black text-brand-900 text-sm">TC</span>
+          </div>
+          <div class="flex flex-col text-left">
+            <span
+              class="font-bold tracking-tight text-sm text-brand-50 leading-none"
+              >THARATHEP C.</span
+            >
+            <span
+              class="text-[10px] text-brand-300 tracking-wider uppercase font-semibold mt-0.5"
+              >Portfolio</span
+            >
+          </div>
+        </a>
+
+        <div class="flex items-center gap-3 lg:gap-5">
+          <a
+            href="https://github.com/SDEPR89"
+            target="_blank"
+            class="p-2 rounded-lg text-brand-300 hover:text-brand-50 hover:bg-brand-600/20 transition-colors hidden sm:block"
+          >
+            <i data-lucide="github" class="w-5 h-5"></i>
+          </a>
+          <a
+            href="mailto:tantharathep@gmail.com"
+            class="p-2 rounded-lg text-brand-300 hover:text-brand-50 hover:bg-brand-600/20 transition-colors hidden sm:block"
+          >
+            <i data-lucide="mail" class="w-5 h-5"></i>
+          </a>
+          <a
+            href="#contact"
+            class="flex items-center gap-2 bg-gradient-to-r from-brand-600 to-brand-300 text-brand-900 px-4 py-2.5 rounded-lg font-bold text-xs uppercase tracking-wider hover:shadow-lg hover:shadow-brand-600/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all"
+          >
+            <span>Let's Talk</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- DYNAMIC BOTTOM NAVIGATION BAR -->
+    <header
+      id="bottom-dock"
+      class="fixed bottom-6 left-0 right-0 w-full z-50 px-4 flex justify-center transition-transform duration-300 ease-out translate-y-0"
+    >
+      <nav
+        class="glass-panel rounded-3xl md:rounded-full px-4 md:px-8 py-3 flex items-center justify-center w-full max-w-fit shadow-2xl"
+        aria-label="Main Navigation"
+      >
+        <ul
+          class="hidden md:flex items-center gap-8 text-sm font-medium text-brand-300"
+        >
+          <li>
+            <a
+              id="nav-about"
+              href="#about"
+              class="nav-link hover:text-brand-50 transition-colors duration-200 px-2"
+              >About me</a
+            >
+          </li>
+          <li>
+            <a
+              id="nav-skills"
+              href="#skills"
+              class="nav-link hover:text-brand-50 transition-colors duration-200 px-2"
+              >Capabilities</a
+            >
+          </li>
+          <li>
+            <a
+              id="nav-projects"
+              href="#projects"
+              class="nav-link hover:text-brand-50 transition-colors duration-200 px-2"
+              >Project Showcase</a
+            >
+          </li>
+          <li>
+            <a
+              id="nav-contact"
+              href="#contact"
+              class="nav-link hover:text-brand-50 transition-colors duration-200 px-2"
+              >Contact</a
+            >
+          </li>
+        </ul>
+        <div
+          class="flex md:hidden w-full items-center justify-around py-1 gap-4 text-brand-300 min-w-[280px]"
+        >
+          <a
+            id="mob-about"
+            href="#about"
+            class="flex flex-col items-center gap-1 hover:text-brand-50 transition-colors duration-200 px-3 py-1 rounded-xl"
+          >
+            <i data-lucide="user" class="w-5 h-5"></i>
+            <span class="text-[9px] font-bold tracking-wider uppercase"
+              >About</span
+            >
+          </a>
+          <a
+            id="mob-skills"
+            href="#skills"
+            class="flex flex-col items-center gap-1 hover:text-brand-50 transition-colors duration-200 px-3 py-1 rounded-xl"
+          >
+            <i data-lucide="brain" class="w-5 h-5"></i>
+            <span class="text-[9px] font-bold tracking-wider uppercase"
+              >Skills</span
+            >
+          </a>
+          <a
+            id="mob-projects"
+            href="#projects"
+            class="flex flex-col items-center gap-1 hover:text-brand-50 transition-colors duration-200 px-3 py-1 rounded-xl"
+          >
+            <i data-lucide="code-2" class="w-5 h-5"></i>
+            <span class="text-[9px] font-bold tracking-wider uppercase"
+              >Projects</span
+            >
+          </a>
+          <a
+            id="mob-contact"
+            href="#contact"
+            class="flex flex-col items-center gap-1 hover:text-brand-50 transition-colors duration-200 px-3 py-1 rounded-xl"
+          >
+            <i data-lucide="mail" class="w-5 h-5"></i>
+            <span class="text-[9px] font-bold tracking-wider uppercase"
+              >Contact</span
+            >
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main
+      class="flex-grow flex flex-col items-center pt-24 md:pt-32 pb-32 md:pb-36 px-4 md:px-6 z-10 relative"
+    >
+      <!-- About Me Section -->
+      <section
+        id="about"
+        class="w-full max-w-5xl mt-6 md:mt-12 mb-20 scroll-mt-24"
+      >
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          <!-- Left Content Area -->
+          <div class="lg:col-span-7 flex flex-col justify-center">
+            <div class="flex flex-wrap items-center gap-4 mb-6">
+              <div
+                class="bg-gradient-to-r from-brand-600 to-brand-300 pl-6 pr-16 py-3.5 rounded-r-full text-brand-50 w-fit text-3xl font-extrabold tracking-tight shadow-lg shadow-brand-600/25 relative overflow-hidden group"
+              >
+                <span class="relative z-10">About me</span>
+                <div
+                  class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"
+                ></div>
+              </div>
+              <div
+                class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold tracking-wide"
+              >
+                <span class="relative flex h-2 w-2">
+                  <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 duration-1000"
+                  ></span>
+                  <span
+                    class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"
+                  ></span>
+                </span>
+                Open for Opportunities
+              </div>
+            </div>
+
+            <div class="space-y-6 text-brand-50 pr-4">
+              <div class="flex items-center gap-2">
+                <!-- Slowed down the star spin slightly for visual comfort -->
+                <i
+                  data-lucide="sparkles"
+                  class="w-4 h-4 text-brand-300 animate-[spin_8s_linear_infinite]"
+                ></i>
+                <p
+                  class="text-sm tracking-widest text-brand-300 uppercase font-bold"
+                >
+                  Welcome to my space
+                </p>
+              </div>
+              <h1
+                class="text-3xl md:text-5xl font-black tracking-tight leading-none"
+              >
+                My name is
+                <span
+                  class="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-50 to-brand-300 bg-size-200"
+                  >Tharathep Chutimapunya</span
+                >.
+              </h1>
+              <p
+                class="text-brand-300 text-base md:text-lg leading-relaxed font-light"
+              >
+                I am an aspiring
+                <strong
+                  class="font-semibold text-brand-50 border-b border-brand-300/30 pb-0.5"
+                  >Computer Engineering Student</strong
+                >
+                with a strong interest in full-stack development. I enjoy
+                building web applications, learning modern technologies, and
+                turning ideas into practical solutions. I am always eager to
+                challenge myself and grow through hands-on projects.
+              </p>
+
+              <div
+                class="glass-panel rounded-2xl p-5 border-l-4 border-l-brand-300 relative overflow-hidden group hover:border-l-white transition-colors duration-300"
+              >
+                <div
+                  class="absolute -right-6 -bottom-6 w-24 h-24 bg-brand-300/10 rounded-full group-hover:bg-brand-300/15 transition-colors"
+                ></div>
+                <div class="flex items-start gap-4">
+                  <div
+                    class="p-2 bg-brand-600/20 rounded-lg text-brand-300 mt-1"
+                  >
+                    <i data-lucide="target" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h4
+                      class="text-xs uppercase font-bold text-brand-300 tracking-wider mb-1"
+                    >
+                      My Objective
+                    </h4>
+                    <p
+                      class="text-brand-300 text-sm leading-relaxed font-light"
+                    >
+                      Aspiring Full-Stack Developer with a passion for
+                      continuous learning and problem-solving. My goal is to
+                      build reliable, user-friendly applications while growing
+                      my expertise across both front-end and back-end
+                      development.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact detail tags -->
+            <div class="mt-10 border-t border-brand-300/10 pt-8">
+              <h3
+                class="text-xs font-bold uppercase tracking-widest text-brand-300 mb-5 flex items-center gap-2"
+              >
+                <i data-lucide="map-pin" class="w-4 h-4 text-brand-300"></i>
+                Direct Contact Channels
+              </h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <a
+                  href="mailto:tantharathep@gmail.com"
+                  class="glass-panel glass-panel-interactive px-4 py-3 rounded-xl flex items-center gap-3.5 group"
+                >
+                  <div
+                    class="w-9 h-9 rounded-lg bg-brand-600/20 group-hover:bg-brand-300/20 text-brand-300 group-hover:text-brand-50 flex items-center justify-center transition-colors duration-300"
+                  >
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                  </div>
+                  <div class="flex flex-col min-w-0 text-left">
+                    <span
+                      class="text-[10px] font-bold text-brand-300 uppercase tracking-widest"
+                      >Email Address</span
+                    >
+                    <span
+                      class="text-sm text-brand-50 truncate group-hover:text-brand-300 transition-colors font-medium"
+                      >tantharathep@gmail.com</span
+                    >
+                  </div>
+                </a>
+                <div
+                  class="glass-panel glass-panel-interactive px-4 py-3 rounded-xl flex items-center gap-3.5 group cursor-default"
+                >
+                  <div
+                    class="w-9 h-9 rounded-lg bg-brand-600/20 group-hover:bg-brand-300/20 text-brand-300 group-hover:text-brand-50 flex items-center justify-center transition-colors duration-300"
+                  >
+                    <i data-lucide="phone" class="w-4 h-4"></i>
+                  </div>
+                  <div class="flex flex-col min-w-0 text-left">
+                    <span
+                      class="text-[10px] font-bold text-brand-300 uppercase tracking-widest"
+                      >Phone Direct</span
+                    >
+                    <span class="text-sm text-brand-50 truncate font-medium"
+                      >(+66) 64-328-0166</span
+                    >
+                    <span class="text-sm text-brand-50 truncate font-medium"
+                      >(+81) 80-8628-4633</span
+                    >
+                  </div>
+                </div>
+                <a
+                  href="https://github.com/SDEPR89?tab=overview"
+                  target="_blank"
+                  class="glass-panel glass-panel-interactive px-4 py-3 rounded-xl flex items-center gap-3.5 group col-span-1 sm:col-span-2"
+                >
+                  <div
+                    class="w-9 h-9 rounded-lg bg-brand-600/20 group-hover:bg-brand-300/20 text-brand-300 group-hover:text-brand-50 flex items-center justify-center transition-colors duration-300"
+                  >
+                    <i data-lucide="github" class="w-4 h-4"></i>
+                  </div>
+                  <div class="flex flex-col min-w-0 text-left">
+                    <span
+                      class="text-[10px] font-bold text-brand-300 uppercase tracking-widest"
+                      >GitHub Repository</span
+                    >
+                    <span
+                      class="text-sm text-brand-50 truncate group-hover:text-brand-300 transition-colors font-medium"
+                      >https://github.com/SDEPR89</span
+                    >
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Visual Area with capsule portrait cropped dynamically -->
+          <div
+            class="lg:col-span-5 flex justify-center items-center relative mt-12 lg:mt-0 group/visual"
+          >
+            <!-- PERFORMANCE FIX: Gradient instead of extreme blur backplate -->
+            <div
+              class="absolute -inset-4 bg-glow-brand-600 rounded-[160px] animate-pulse-slow"
+            ></div>
+
+            <!-- PERFORMANCE FIX: Slowed down rotations significantly (40s -> 80s) to reduce CPU strain -->
+            <div
+              class="absolute inset-[-15px] border border-dashed border-brand-300/20 rounded-[155px] animate-[spin_80s_linear_infinite] pointer-events-none"
+            ></div>
+            <div
+              class="absolute inset-[-8px] border border-brand-600/30 rounded-[148px] animate-[spin_60s_linear_infinite_reverse] pointer-events-none"
+            ></div>
+
+            <!-- Capsule wireframe backdrop shadow elements -->
+            <div
+              class="absolute inset-0 border-2 border-brand-300/30 rounded-[140px] transform rotate-3 scale-[1.03] pointer-events-none transition-transform duration-500 group-hover/visual:rotate-1 group-hover/visual:scale-105"
+            ></div>
+
+            <!-- Capsule Frame container -->
+            <div
+              class="capsule-avatar-frame w-72 h-[380px] md:w-80 md:h-[430px] z-10 relative bg-brand-900"
+            >
+              <img
+                src="./Picture/Me.png"
+                alt="Tharathep Chutimapunya"
+                class="w-full h-full object-cover object-center scale-[1.05] transition-transform duration-700 ease-out group-hover/visual:scale-110"
+                onerror="
+                  this.src =
+                    'https://placehold.co/320x430/0d2440/7ba4d0?text=Tharathep'
+                "
+              />
+
+              <!-- Liquid glossy glass overlay shine reflection -->
+              <div
+                class="absolute inset-0 bg-gradient-to-tr from-brand-900/50 via-transparent to-white/10 pointer-events-none z-20"
+              ></div>
+
+              <!-- Location badge tag inside the visual canvas -->
+              <div
+                class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-brand-900/90 backdrop-blur-md border border-brand-300/20 px-4 py-1.5 rounded-full flex items-center gap-1.5 shadow-lg opacity-0 translate-y-2 group-hover/visual:opacity-100 group-hover/visual:translate-y-0 transition-all duration-300 z-30"
+              >
+                <span class="relative flex h-1.5 w-1.5">
+                  <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-300 opacity-75 duration-1000"
+                  ></span>
+                  <span
+                    class="relative inline-flex rounded-full h-1.5 w-1.5 bg-brand-300"
+                  ></span>
+                </span>
+                <span
+                  class="text-[10px] text-brand-50 tracking-wide font-semibold"
+                  >Tsuruoka, Japan</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="skills" class="w-full max-w-5xl mb-24 scroll-mt-24">
+        <div
+          class="bg-gradient-to-br from-brand-600/10 via-brand-900/80 to-brand-900/95 border border-brand-300/15 shadow-2xl rounded-[3rem] p-8 md:p-12 relative overflow-hidden backdrop-blur-xl"
+        >
+          <!-- Replaced blur with radial gradient -->
+          <div
+            class="absolute -top-24 -left-24 w-64 h-64 orb-glow-brand-600"
+          ></div>
+
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 relative z-10"
+          >
+            <!-- Left Side Columns -->
+            <div class="space-y-10">
+              <!-- Education Block -->
+              <div>
+                <div class="flex items-center gap-3 mb-4">
+                  <h3
+                    class="text-xl md:text-2xl font-bold tracking-tight text-brand-50"
+                  >
+                    Education
+                  </h3>
+                  <span
+                    class="text-[10px] font-semibold uppercase tracking-wider text-brand-300 border border-brand-300/20 px-3 py-1 rounded-full"
+                    >2024 - Present</span
+                  >
+                </div>
+                <p class="text-sm text-brand-300 leading-relaxed font-light">
+                  TSURUOKA KOSEN —
+                  <span class="text-brand-50 font-medium"
+                    >Computer Engineering</span
+                  >
+                </p>
+              </div>
+
+              <!-- Technical Skill Icons Grid -->
+              <div>
+                <h3 class="text-lg font-bold tracking-tight text-brand-50 mb-4">
+                  Technical Skills
+                </h3>
+                <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-w-md">
+                  <!-- Reused structure, standardized transitions to transform for performance -->
+                  <div
+                    class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+                  >
+                    <i
+                      data-lucide="code"
+                      class="w-6 h-6 text-sky-400 group-hover:-translate-y-1 transition-transform duration-200"
+                    ></i>
+                    <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                      >VS Code</span
+                    >
+                  </div>
+                  <div
+                    class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+                  >
+                    <i
+                      data-lucide="braces"
+                      class="w-6 h-6 text-yellow-400 group-hover:-translate-y-1 transition-transform duration-200"
+                    ></i>
+                    <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                      >JavaScript</span
+                    >
+                  </div>
+                  <div
+                    class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+                  >
+                    <i
+                      data-lucide="file-code-2"
+                      class="w-6 h-6 text-orange-500 group-hover:-translate-y-1 transition-transform duration-200"
+                    ></i>
+                    <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                      >HTML</span
+                    >
+                  </div>
+                  <div
+                    class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+                  >
+                    <i
+                      data-lucide="palette"
+                      class="w-6 h-6 text-pink-400 group-hover:-translate-y-1 transition-transform duration-200"
+                    ></i>
+                    <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                      >CSS</span
+                    >
+                  </div>
+                  <div
+                    class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+                  >
+                    <i
+                      data-lucide="database"
+                      class="w-6 h-6 text-teal-400 group-hover:-translate-y-1 transition-transform duration-200"
+                    ></i>
+                    <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                      >SQL</span
+                    >
+                  </div>
+                  <div
+                    class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+                  >
+                    <i
+                      data-lucide="terminal"
+                      class="w-6 h-6 text-yellow-500 group-hover:-translate-y-1 transition-transform duration-200"
+                    ></i>
+                    <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                      >Python</span
+                    >
+                  </div>
+                  <div
+                    class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+                  >
+                    <i
+                      data-lucide="git-branch"
+                      class="w-6 h-6 text-orange-600 group-hover:-translate-y-1 transition-transform duration-200"
+                    ></i>
+                    <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                      >Git</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Interest -->
+              <div>
+                <h3 class="text-lg font-bold tracking-tight text-brand-50 mb-3">
+                  Interest
+                </h3>
+                <div
+                  class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-brand-300"
+                >
+                  <span>FULL STACK DEV</span
+                  ><span class="text-brand-600">•</span> <span>Front end</span
+                  ><span class="text-brand-600">•</span> <span>Back end</span
+                  ><span class="text-brand-600">•</span> <span>Technology</span
+                  ><span class="text-brand-600">•</span> <span>AI</span
+                  ><span class="text-brand-600">•</span>
+                  <span>Cyber Security</span
+                  ><span class="text-brand-600">•</span>
+                  <span>Network</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side Columns -->
+            <div class="space-y-10">
+              <!-- Soft Skills -->
+              <div>
+                <h3 class="text-lg font-bold tracking-tight text-brand-50 mb-4">
+                  Soft Skill
+                </h3>
+                <div
+                  class="grid grid-cols-2 gap-x-6 gap-y-3 text-xs md:text-sm text-brand-300 border-l border-brand-300/20 pl-4"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-brand-300 rounded-full"></span
+                    ><span>Teamwork</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-brand-300 rounded-full"></span
+                    ><span>Critical Thinking</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-brand-300 rounded-full"></span
+                    ><span>Communication</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-brand-300 rounded-full"></span
+                    ><span>Time Management</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-brand-300 rounded-full"></span
+                    ><span>AI Prompt</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-brand-300 rounded-full"></span
+                    ><span>Adaptability</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Skill Set -->
+              <div>
+                <h3 class="text-lg font-bold tracking-tight text-brand-50 mb-4">
+                  Skill Set
+                </h3>
+                <div
+                  class="grid grid-cols-2 gap-x-6 gap-y-3 text-xs md:text-sm text-brand-300 border-l border-brand-300/20 pl-4"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-brand-300 rounded-full"></span
+                    ><span>Researching</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-brand-300 rounded-full"></span
+                    ><span>Web Design</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-brand-300 rounded-full"></span
+                    ><span>App Design</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-brand-300 rounded-full"></span
+                    ><span>Brainstorming</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Languages -->
+              <div>
+                <h3 class="text-lg font-bold tracking-tight text-brand-50 mb-3">
+                  Language
+                </h3>
+                <div
+                  class="flex flex-wrap items-center gap-3 text-xs md:text-sm text-brand-300"
+                >
+                  <span>Thai (Native)</span
+                  ><span class="text-brand-600">|</span>
+                  <span>English (Intermediate)</span
+                  ><span class="text-brand-600">|</span>
+                  <span>Japanese (Intermediate)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="projects" class="w-full max-w-5xl mb-24 scroll-mt-24">
+        <div
+          class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4"
+        >
+          <div>
+            <span
+              class="text-xs font-semibold uppercase tracking-widest text-brand-300"
+              >Evidence & Projects</span
+            >
+            <h2 class="text-3xl md:text-4xl font-extrabold text-brand-50 mt-1">
+              Project Examples
+            </h2>
+          </div>
+          <p class="text-brand-300 text-sm max-w-xs md:text-right">
+            Click each project container to view in-depth architectural details,
+            solutions, and code bases.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[280px]">
+          <!-- Bento Block 1 -->
+          <div
+            class="md:col-span-2 glass-panel glass-panel-interactive rounded-3xl p-8 flex flex-col justify-between group overflow-hidden relative cursor-pointer"
+            onclick="openModal('project-nexus-modal')"
+          >
+            <div
+              class="absolute top-0 right-0 w-80 h-80 orb-glow-brand-300 translate-x-1/3 -translate-y-1/3 group-hover:opacity-75 transition-opacity duration-300"
+            ></div>
+            <div class="z-10 h-full flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-start mb-4">
+                  <div
+                    class="p-2.5 rounded-2xl bg-brand-600/30 border border-brand-300/20"
+                  >
+                    <img
+                      src="./Picture/Kurhona.png"
+                      alt="Kurhona logo"
+                      class="w-6 h-6 object-contain"
+                    />
+                  </div>
+                </div>
+                <h3
+                  class="text-2xl font-bold mb-2 text-brand-50 flex items-center gap-2"
+                >
+                  Kurhona (Task Manager Web App)
+                  <i
+                    data-lucide="arrow-up-right"
+                    class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"
+                  ></i>
+                </h3>
+                <p class="text-brand-300 text-sm max-w-xl leading-relaxed">
+                  <strong>Problem:</strong> Nowadays, people struggle to keep up
+                  with their work, tasks, or homework. <br />
+                  <strong>Solution:</strong> Kurhona helps you manage your
+                  tasks, prioritize what matters most, and track everything from
+                  a single dashboard.
+                </p>
+              </div>
+              <div class="flex justify-between items-center mt-4">
+                <span
+                  class="text-xs text-brand-300 group-hover:text-brand-50 flex items-center gap-1 font-semibold"
+                  >View Tech Stack
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i
+                ></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento Block 2 -->
+          <div
+            class="glass-panel glass-panel-interactive rounded-3xl p-8 flex flex-col justify-between group relative overflow-hidden cursor-pointer"
+            onclick="openModal('project-forms-modal')"
+          >
+            <div
+              class="absolute inset-0 bg-gradient-to-br from-brand-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            ></div>
+            <div class="z-10 flex flex-col h-full justify-between">
+              <div>
+                <div
+                  class="p-2.5 rounded-2xl bg-brand-600/30 border border-brand-300/20 w-fit mb-4"
+                >
+                  <img
+                    src="./Picture/Miniproject_logo.jpeg"
+                    alt="Mini Projects logo"
+                    class="w-6 h-6 object-contain"
+                  />
+                </div>
+
+                <h3
+                  class="text-xl font-bold text-brand-50 mb-1 flex items-center gap-1.5"
+                >
+                  Mini Projects
+                  <i
+                    data-lucide="arrow-up-right"
+                    class="w-3.5 h-3.5 text-brand-300"
+                  ></i>
+                </h3>
+                <p
+                  class="text-brand-300 text-xs leading-normal font-light mb-4"
+                >
+                  <strong>Objective:</strong> Practice building websites through
+                  small, focused projects.
+                </p>
+                <div class="space-y-2">
+                  <div class="flex items-center gap-2 text-xs text-brand-300">
+                    <i
+                      data-lucide="heart"
+                      class="w-3.5 h-3.5 text-brand-300"
+                    ></i>
+                    Tindog — dating-style landing page
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-brand-300">
+                    <i
+                      data-lucide="drum"
+                      class="w-3.5 h-3.5 text-brand-300"
+                    ></i>
+                    Drum Kit — interactive sound app
+                  </div>
+                  <div class="flex items-center gap-2 text-xs text-brand-300">
+                    <i
+                      data-lucide="gamepad-2"
+                      class="w-3.5 h-3.5 text-brand-300"
+                    ></i>
+                    Simon — memory game
+                  </div>
+                </div>
+              </div>
+              <div
+                class="flex items-center gap-1 text-xs text-brand-300 group-hover:text-brand-50 font-semibold mt-4"
+              >
+                View Projects
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bento Block 3 -->
+          <div
+            class="md:col-span-2 glass-panel glass-panel-interactive rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between group overflow-hidden relative cursor-pointer"
+            onclick="openModal('project-hydration-modal')"
+          >
+            <div class="z-10 md:w-1/2 mb-6 md:mb-0 text-left">
+              <div
+                class="p-2.5 rounded-2xl bg-brand-600/30 border border-brand-300/20 w-fit mb-4"
+              >
+                <img
+                  src="./Picture/Translator_logo.jpeg"
+                  alt="Real-Time Translator logo"
+                  class="w-6 h-6 object-contain"
+                />
+              </div>
+
+              <h3 class="text-2xl font-bold mb-2 text-brand-50">
+                Real-Time Translator
+              </h3>
+              <p class="text-brand-300 text-sm max-w-xl leading-relaxed">
+                <strong>Problem:</strong> During class, I can't catch every
+                Japanese sentence the teacher says. <br />
+                <strong>Solution:</strong> This web app captures spoken
+                sentences and displays translated subtitles live, supporting
+                more languages than just Japanese.
+              </p>
+              <span
+                class="text-xs text-brand-300 group-hover:text-brand-50 flex items-center gap-1 font-semibold"
+                >View Tech Stack
+                <i data-lucide="chevron-right" class="w-4 h-4"></i
+              ></span>
+            </div>
+
+            <div class="z-10 w-full md:w-1/2 flex justify-end">
+              <div
+                class="w-full max-w-[280px] h-[200px] rounded-2xl border border-brand-300/20 shadow-lg transform -rotate-2 group-hover:rotate-0 transition-transform duration-300 overflow-hidden bg-brand-900/80"
+              >
+                <img
+                  src="./Picture/Translator.png"
+                  alt="Real-Time Translator app"
+                  class="w-full h-full object-cover object-top"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="w-full max-w-5xl mb-12 scroll-mt-24">
+        <div
+          class="glass-panel rounded-[3rem] p-8 md:p-12 relative overflow-hidden backdrop-blur-xl"
+        >
+          <div
+            class="absolute -bottom-24 -right-24 w-64 h-64 orb-glow-brand-300"
+          ></div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 relative z-10">
+            <div class="lg:col-span-5 flex flex-col justify-between">
+              <div>
+                <span
+                  class="text-xs font-semibold uppercase tracking-widest text-brand-300"
+                  >Get In Touch</span
+                >
+                <h2 class="text-3xl font-extrabold text-brand-50 mt-1 mb-4">
+                  Let's build something amazing together
+                </h2>
+                <p
+                  class="text-brand-300 text-sm leading-relaxed font-light mb-6"
+                >
+                  Have a challenging project, full-stack opportunity, or just
+                  want to say hi? Send over a message, and I'll get back to you
+                  within 24 hours.
+                </p>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-center gap-3 text-brand-300">
+                  <i data-lucide="globe" class="w-5 h-5 text-brand-300"></i>
+                  <span class="text-xs"
+                    >Available worldwide for remote projects</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <form
+              onsubmit="handleContactSubmit(event)"
+              class="lg:col-span-7 space-y-4"
+            >
+              <input
+                type="hidden"
+                name="access_key"
+                value="c6a5e7d1-d32d-441e-8b28-f6bd4b8712f7"
+              />
+              <input
+                type="hidden"
+                name="subject"
+                value="New message from your portfolio"
+              />
+              <input
+                type="hidden"
+                name="from_name"
+                value="Portfolio Contact Form"
+              />
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1.5">
+                  <label
+                    class="text-[11px] font-bold text-brand-300 uppercase tracking-widest"
+                    >Full Name</label
+                  >
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    placeholder="John Doe"
+                    class="w-full bg-brand-900/60 border border-brand-300/20 focus:border-brand-300/60 rounded-xl px-4 py-3 text-sm text-brand-50 outline-none transition-colors placeholder:text-brand-300/40"
+                  />
+                </div>
+                <div class="space-y-1.5">
+                  <label
+                    class="text-[11px] font-bold text-brand-300 uppercase tracking-widest"
+                    >Email Address</label
+                  >
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder="john@example.com"
+                    class="w-full bg-brand-900/60 border border-brand-300/20 focus:border-brand-300/60 rounded-xl px-4 py-3 text-sm text-brand-50 outline-none transition-colors placeholder:text-brand-300/40"
+                  />
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                <label
+                  class="text-[11px] font-bold text-brand-300 uppercase tracking-widest"
+                  >Your Message</label
+                >
+                <textarea
+                  name="message"
+                  required
+                  rows="4"
+                  placeholder="Tell me about your thoughts or project ideas..."
+                  class="w-full bg-brand-900/60 border border-brand-300/20 focus:border-brand-300/60 rounded-xl px-4 py-3 text-sm text-brand-50 outline-none transition-colors placeholder:text-brand-300/40 resize-none"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-brand-600 to-brand-300 text-brand-900 hover:text-white font-extrabold uppercase text-xs tracking-widest py-4 px-6 rounded-xl shadow-lg hover:shadow-brand-600/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                Send Direct Message
+                <i data-lucide="send" class="w-4 h-4"></i>
+              </button>
+
+              <div
+                id="form-feedback"
+                class="hidden p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs text-center font-medium mt-3"
+              >
+                <span>Sending...</span>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modals -->
+    <div
+      id="project-nexus-modal"
+      class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-brand-900/80 backdrop-blur-sm"
+    >
+      <div
+        class="glass-panel w-full max-w-2xl rounded-[2rem] overflow-hidden shadow-2xl border border-brand-300/20"
+      >
+        <div
+          class="px-6 py-5 border-b border-brand-300/10 flex justify-between items-center bg-brand-900/60"
+        >
+          <h3 class="text-lg font-bold text-brand-50 flex items-center gap-2">
+            <i data-lucide="activity" class="text-brand-300 w-5 h-5"></i>
+            Kurhona
+          </h3>
+          <button
+            onclick="closeModal('project-nexus-modal')"
+            class="p-1 rounded-full hover:bg-brand-50/10 text-brand-300 hover:text-brand-50 transition-colors"
+          >
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div
+          class="p-6 overflow-y-auto max-h-[70vh] space-y-4 text-left bg-brand-900/40"
+        >
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-w-md">
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/react"
+                alt="React"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >React</span
+              >
+            </div>
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/typescript"
+                alt="TypeScript"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >TypeScript</span
+              >
+            </div>
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/vite"
+                alt="Vite"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >Vite</span
+              >
+            </div>
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/css"
+                alt="CSS"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >CSS</span
+              >
+            </div>
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/supabase"
+                alt="Supabase"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >Supabase</span
+              >
+            </div>
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/vercel/FFFFFF"
+                alt="Vercel"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >Vercel</span
+              >
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 pt-2">
+            <div
+              class="p-3 rounded-xl bg-brand-900/60 border border-brand-300/20"
+            >
+              <span class="text-[10px] uppercase font-bold text-brand-300"
+                >Repository</span
+              >
+              <a
+                href="https://github.com/SDEPR89/Kurhona"
+                class="text-xs font-bold text-brand-50 mt-0.5 flex items-center gap-1 hover:underline"
+                >https://github.com/SDEPR89/Kurhona
+                <i data-lucide="github" class="w-3 h-3"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="project-forms-modal"
+      class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-brand-900/80 backdrop-blur-sm"
+    >
+      <div
+        class="glass-panel w-full max-w-2xl rounded-[2rem] overflow-hidden shadow-2xl border border-brand-300/20"
+      >
+        <div
+          class="px-6 py-5 border-b border-brand-300/10 flex justify-between items-center bg-brand-900/60"
+        >
+          <h3 class="text-lg font-bold text-brand-50 flex items-center gap-2">
+            <i data-lucide="package" class="text-brand-300 w-5 h-5"></i> Mini
+            Project
+          </h3>
+          <button
+            onclick="closeModal('project-forms-modal')"
+            class="p-1 rounded-full hover:bg-brand-50/10 text-brand-300 hover:text-brand-50 transition-colors"
+          >
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div
+          class="p-6 overflow-y-auto max-h-[70vh] space-y-8 text-left bg-brand-900/40"
+        >
+          <!-- Tindog -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-1 h-5 bg-gradient-to-b from-brand-300 to-brand-600 rounded-full"
+              ></div>
+              <h4
+                class="text-sm font-bold text-brand-50 uppercase tracking-wider"
+              >
+                Tindog Website
+              </h4>
+            </div>
+            <div class="grid grid-cols-1 gap-3">
+              <img
+                src="./Picture/Tindog1.png"
+                alt="Tindog screenshot 1"
+                class="w-full rounded-xl border border-brand-300/20 hover:border-brand-300/50 transition-colors duration-300 shadow-lg"
+              />
+              <img
+                src="./Picture/Tindog2.png
+                alt="Tindog screenshot 2"
+                class="w-full rounded-xl border border-brand-300/20 hover:border-brand-300/50 transition-colors duration-300 shadow-lg"
+              />
+              <img
+                src="./Picture/Tindog3.png"
+                alt="Tindog screenshot 3"
+                class="w-full rounded-xl border border-brand-300/20 hover:border-brand-300/50 transition-colors duration-300 shadow-lg"
+              />
+            </div>
+          </div>
+
+          <!-- Drum Kit -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-1 h-5 bg-gradient-to-b from-brand-300 to-brand-600 rounded-full"
+              ></div>
+              <h4
+                class="text-sm font-bold text-brand-50 uppercase tracking-wider"
+              >
+                Drum Kit Website
+              </h4>
+            </div>
+            <img
+              src="./Picture/Drum.png"
+              alt="Drum Kit screenshot"
+              class="w-full rounded-xl border border-brand-300/20 hover:border-brand-300/50 transition-colors duration-300 shadow-lg"
+            />
+          </div>
+
+          <!-- Simon -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-2">
+              <div
+                class="w-1 h-5 bg-gradient-to-b from-brand-300 to-brand-600 rounded-full"
+              ></div>
+              <h4
+                class="text-sm font-bold text-brand-50 uppercase tracking-wider"
+              >
+                Simon Website
+              </h4>
+            </div>
+            <img
+              src="./Picture/Simon.png"
+              alt="Simon game screenshot"
+              class="w-full rounded-xl border border-brand-300/20 hover:border-brand-300/50 transition-colors duration-300 shadow-lg"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="project-hydration-modal"
+      class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-brand-900/80 backdrop-blur-sm"
+    >
+      <div
+        class="glass-panel w-full max-w-2xl rounded-[2rem] overflow-hidden shadow-2xl border border-brand-300/20"
+      >
+        <div
+          class="px-6 py-5 border-b border-brand-300/10 flex justify-between items-center bg-brand-900/60"
+        >
+          <h3 class="text-lg font-bold text-brand-50 flex items-center gap-2">
+            <i data-lucide="zap" class="text-brand-300 w-5 h-5"></i> Real-Time
+            Translator
+          </h3>
+
+          <button
+            onclick="closeModal('project-hydration-modal')"
+            class="p-1 rounded-full hover:bg-brand-50/10 text-brand-300 hover:text-brand-50 transition-colors"
+          >
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div
+          class="p-6 overflow-y-auto max-h-[70vh] space-y-4 text-left bg-brand-900/40"
+        >
+          <img
+            src="./Picture/Translator.png"
+            alt="Real-Time Translator"
+            class="w-full rounded-xl border border-brand-300/20 shadow-lg"
+          />
+
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-w-md">
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/typescript"
+                alt="TypeScript"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >TypeScript</span
+              >
+            </div>
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/python"
+                alt="Python"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >Python</span
+              >
+            </div>
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/css"
+                alt="CSS"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >CSS</span
+              >
+            </div>
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/javascript"
+                alt="JavaScript"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >JavaScript</span
+              >
+            </div>
+            <div
+              class="bg-brand-900/80 border border-brand-300/10 p-3 rounded-2xl flex flex-col items-center justify-center hover:bg-brand-600/30 transition-colors duration-200 group cursor-default"
+            >
+              <img
+                src="https://cdn.simpleicons.org/html5"
+                alt="HTML"
+                class="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-200"
+              />
+              <span class="text-[10px] text-brand-300 mt-1.5 font-medium"
+                >HTML</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer
+      class="w-full border-t border-brand-50/10 mt-auto pt-12 pb-8 px-6 bg-brand-900/80 z-10"
+    >
+      <div
+        class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6"
+      >
+        <div class="flex items-center gap-2">
+          <div
+            class="w-7 h-7 rounded-full bg-brand-600 flex items-center justify-center text-brand-900 font-bold text-xs"
+          >
+            TC
+          </div>
+          <span class="font-medium text-brand-300 text-sm"
+            >Tharathep Chutimapunya © 2026. All rights reserved.</span
+          >
+        </div>
+        <div class="flex gap-6 text-sm text-brand-300">
+          <a href="#about" class="hover:text-brand-50 transition-colors"
+            >About</a
+          >
+          <a href="#skills" class="hover:text-brand-50 transition-colors"
+            >Capabilities</a
+          >
+          <a href="#projects" class="hover:text-brand-50 transition-colors"
+            >Projects</a
+          >
+          <a href="#contact" class="hover:text-brand-50 transition-colors"
+            >Contact</a
+          >
+        </div>
+        <div class="flex gap-4">
+          <a
+            href="https://github.com/SDEPR89?tab=overview"
+            target="_blank"
+            aria-label="Github"
+            class="text-brand-300 hover:text-brand-50 transition-colors"
+            ><i data-lucide="github" class="w-5 h-5"></i
+          ></a>
+          <a
+            href="mailto:tantharathep@gmail.com"
+            aria-label="Mail"
+            class="text-brand-300 hover:text-brand-50 transition-colors"
+            ><i data-lucide="mail" class="w-5 h-5"></i
+          ></a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>
